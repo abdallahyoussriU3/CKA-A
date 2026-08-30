@@ -1,0 +1,109 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: project-r500
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: main
+  namespace: project-r500
+spec:
+  gatewayClassName: nginx
+  listeners:
+  - name: http
+    port: 80
+    protocol: HTTP
+    allowedRoutes:
+      namespaces:
+        from: Same
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: web-desktop-content
+  namespace: project-r500
+data:
+  index.html: "Web Desktop App"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-desktop
+  namespace: project-r500
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-desktop
+  template:
+    metadata:
+      labels:
+        app: web-desktop
+    spec:
+      containers:
+      - name: web
+        image: nginx:1-alpine
+        volumeMounts:
+        - name: content
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: content
+        configMap:
+          name: web-desktop-content
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-desktop
+  namespace: project-r500
+spec:
+  selector:
+    app: web-desktop
+  ports:
+  - port: 80
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: web-mobile-content
+  namespace: project-r500
+data:
+  index.html: "Web Mobile App"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-mobile
+  namespace: project-r500
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-mobile
+  template:
+    metadata:
+      labels:
+        app: web-mobile
+    spec:
+      containers:
+      - name: web
+        image: nginx:1-alpine
+        volumeMounts:
+        - name: content
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: content
+        configMap:
+          name: web-mobile-content
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-mobile
+  namespace: project-r500
+spec:
+  selector:
+    app: web-mobile
+  ports:
+  - port: 80
