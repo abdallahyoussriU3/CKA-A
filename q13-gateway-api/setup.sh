@@ -7,6 +7,14 @@ set -e
 # 1. Gateway API CRDs (standard channel)
 kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.2.0/standard-install.yaml
 
+# Remove old NGINX Gateway Fabric CRDs to avoid storedVersions conflicts
+kubectl delete crd \
+  clientsettingspolicies.gateway.nginx.org \
+  nginxgateways.gateway.nginx.org \
+  nginxproxies.gateway.nginx.org \
+  observabilitypolicies.gateway.nginx.org \
+  --ignore-not-found
+
 # 2. NGINX Gateway Fabric (controller + GatewayClass)
 kubectl apply -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.5.0/deploy/crds.yaml
 kubectl apply -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.5.0/deploy/default/deploy.yaml
