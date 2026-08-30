@@ -1,0 +1,10 @@
+ k -n project-tiger run tigers-reunite --image=httpd:2-alpine --labels "pod=container,container=pod"
+
+ crictl ps | grep -i tigers-reunite  >> then put the id of container in dedicated file
+
+ #To know info.runtimeType
+crictl inspect <Container-Id> | grep -i runtimeType -A 5
+
+#command to get container logs
+circtl logs <Container-Id> >> /course/17/log.txt
+ 
