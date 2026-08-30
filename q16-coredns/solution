@@ -1,0 +1,17 @@
+#To Take bakup from coredns config map
+k get cm -n kube-system coredns -o yaml > /course/16/coredns_backup.yaml
+
+#2. update CoreDnsConfiguration
+k -n kube-system cm coredns
+  ( in core file beside cluster.local we will add custom-domain)
+
+# restart coredns deployment
+k -n kube-system rollout restart deployment coredns
+
+# create test pod
+k run test --image=busybox:1 -- sh - c 'sleep 1d'
+
+k exec test -it -- sh
+/ # nslookup kuberentes.default.svc.clusgter.local
+
+/ # nslookup kuberentes.default.svc.custom-domain
